@@ -5,10 +5,23 @@ function Chat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (input.trim()) {
-      setMessages([...messages, { text: input, sender: 'user' }]);
+      const userMessage = { text: input, sender: 'user' };
+      setMessages([...messages, userMessage]);
       setInput('');
+
+      try {
+        const chatGroq = new ChatGroq({ apiKey: process.env.REACT_APP_CHATGROQ_API_KEY });
+        const response = await chatGroq.ask(input);
+
+        const botMessage = { text: response.answer, sender: 'bot' };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
+      } catch (error) {
+        console.error('Error with ChatGroq:', error);
+        const errorMessage = { text: 'Sorry, there was an error processing your request.', sender: 'bot' };
+        setMessages((prevMessages) => [...prevMessages, errorMessage]);
+      }
     }
   };
 
