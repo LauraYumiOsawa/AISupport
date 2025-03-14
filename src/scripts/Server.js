@@ -9,26 +9,22 @@ const PORT = process.env.REACT_APP_API_PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
-const API_KEY = process.env.GPT_API_KEY;
+const OLLAMA_API_URL = "http://localhost:11434/api/generate";
 
 app.post('/chat', async (req, res) => {
     try {
         const { message } = req.body;
 
-        const response = await axios.post(DEEPSEEK_API_URL, {
-            model: "deepseek-chat",
-            messages: [{ role: "user", content: message }]
-        }, {
-            headers: {
-                "Authorization": `Bearer ${API_KEY}`,
-                "Content-Type": "application/json"
-            }
+        const response = await axios.post(OLLAMA_API_URL, {
+            model: "deepseek-coder",
+            prompt: message,
+            stream: false
         });
 
-        res.json(response.data);
+        res.json({ text: response.data.response });
     } catch (error) {
-        res.status(500).json({ error: "Erro ao conectar com o DeepSeek" });
+        console.error("Erro Ollama:", error.message);
+        res.status(500).json({ error: "Erro ao conectar com o Ollama" });
     }
 });
 
