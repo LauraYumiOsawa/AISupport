@@ -15,6 +15,7 @@
   margin: 5px 0;
   padding: 10px;
   border-radius: 5px;
+  background-color: #dddddd;
 }
 
 .Chat-message.user {
@@ -43,4 +44,9 @@
   color: #fff;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.bot-thought{
+  background-color: #4b4b4b;
+  color: #f1f1f1;
 }
