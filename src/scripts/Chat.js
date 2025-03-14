@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import '../styles/Chat.css';
+
+const API_PORT = process.env.REACT_APP_API_PORT || 3001;
+const API_URL = `http://localhost:${API_PORT}/chat`;
 
 function Chat() {
   const [messages, setMessages] = useState([]);
@@ -12,14 +16,12 @@ function Chat() {
       setInput('');
 
       try {
-        const chatGroq = new ChatGroq({ apiKey: process.env.REACT_APP_CHATGROQ_API_KEY });
-        const response = await chatGroq.ask(input);
-
-        const botMessage = { text: response.answer, sender: 'bot' };
+        const response = await axios.post(API_URL, { message: input });
+        const botMessage = { text: response.data.choices[0].message.content, sender: 'bot' };
         setMessages((prevMessages) => [...prevMessages, botMessage]);
       } catch (error) {
-        console.error('Error with ChatGroq:', error);
-        const errorMessage = { text: 'Sorry, there was an error processing your request.', sender: 'bot' };
+        console.error('Erro DeepSeek:', error.response ? error.response.data : error.message);
+        const errorMessage = { text: 'Erro de request.', sender: 'bot' };
         setMessages((prevMessages) => [...prevMessages, errorMessage]);
       }
     }
